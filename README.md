@@ -12,6 +12,7 @@ Built as a full stack project: React frontend, Express API, SQLite database.
 - Open a lesson to read the full explanation
 - Mark lessons as completed
 - Progress bar that updates automatically and is saved in the database
+- Bilingual interface (Hebrew and English) with automatic RTL/LTR switching
 
 ## Tech Stack
 

@@ -6,22 +6,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// כל השיעורים (בלי התוכן המלא, לרשימה)
+// כל השיעורים (בלי התוכן המלא, לרשימה). השפה נבחרת עם ?lang=en או ?lang=he
 app.get("/api/lessons", (req, res) => {
+  const cols =
+    req.query.lang === "en"
+      ? "title_en AS title, summary_en AS summary"
+      : "title, summary";
+
   const lessons = db
-    .prepare("SELECT id, title, summary, completed FROM lessons")
+    .prepare(`SELECT id, ${cols}, completed FROM lessons`)
     .all();
   res.json(lessons);
 });
 
 // שיעור בודד
 app.get("/api/lessons/:id", (req, res) => {
+  const cols =
+    req.query.lang === "en"
+      ? "title_en AS title, summary_en AS summary, content_en AS content"
+      : "title, summary, content";
+
   const lesson = db
-    .prepare("SELECT * FROM lessons WHERE id = ?")
+    .prepare(`SELECT id, ${cols}, completed FROM lessons WHERE id = ?`)
     .get(req.params.id);
 
   if (!lesson) {
-    return res.status(404).json({ error: "השיעור לא נמצא" });
+    return res.status(404).json({ error: "Lesson not found" });
   }
   res.json(lesson);
 });
@@ -31,7 +41,7 @@ app.patch("/api/lessons/:id/complete", (req, res) => {
   const { completed } = req.body;
 
   if (typeof completed !== "boolean") {
-    return res.status(400).json({ error: "completed חייב להיות true או false" });
+    return res.status(400).json({ error: "completed must be true or false" });
   }
 
   const result = db
@@ -39,7 +49,7 @@ app.patch("/api/lessons/:id/complete", (req, res) => {
     .run(completed ? 1 : 0, req.params.id);
 
   if (result.changes === 0) {
-    return res.status(404).json({ error: "השיעור לא נמצא" });
+    return res.status(404).json({ error: "Lesson not found" });
   }
   res.json({ id: Number(req.params.id), completed });
 });
