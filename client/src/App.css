@@ -41,3 +41,39 @@ button {
   padding: 6px 12px;
   margin: 4px 0;
 }
+.quiz {
+  margin: 20px 0;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.question {
+  margin-bottom: 16px;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  text-align: start;
+  margin: 6px 0;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+}
+
+.option:disabled {
+  cursor: default;
+  color: #111;
+}
+
+.option.correct {
+  background: #dcfce7;
+  border-color: #22c55e;
+}
+
+.option.wrong {
+  background: #fee2e2;
+  border-color: #ef4444;
+}

@@ -13,6 +13,7 @@ Built as a full stack project: React frontend, Express API, SQLite database.
 - Mark lessons as completed
 - Progress bar that updates automatically and is saved in the database
 - Bilingual interface (Hebrew and English) with automatic RTL/LTR switching
+- Quiz at the end of each lesson with instant feedback and a score
 
 ## Tech Stack
 
@@ -62,6 +63,5 @@ Open http://localhost:5173 in your browser.
 
 ## Future Improvements
 
-- Quiz at the end of each lesson
 - User registration and login
 - Deployment

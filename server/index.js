@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// כל השיעורים (בלי התוכן המלא, לרשימה). השפה נבחרת עם ?lang=en או ?lang=he
+// כל השיעורים. השפה נבחרת עם ?lang=en או ?lang=he
 app.get("/api/lessons", (req, res) => {
   const cols =
     req.query.lang === "en"
@@ -34,6 +34,43 @@ app.get("/api/lessons/:id", (req, res) => {
     return res.status(404).json({ error: "Lesson not found" });
   }
   res.json(lesson);
+});
+
+// שאלות החידון של שיעור (בלי התשובה הנכונה)
+app.get("/api/lessons/:id/quiz", (req, res) => {
+  const en = req.query.lang === "en";
+
+  const rows = db
+    .prepare(
+      "SELECT id, question, options, question_en, options_en FROM questions WHERE lesson_id = ?"
+    )
+    .all(req.params.id);
+
+  res.json(
+    rows.map((r) => ({
+      id: r.id,
+      question: en ? r.question_en : r.question,
+      options: JSON.parse(en ? r.options_en : r.options),
+    }))
+  );
+});
+
+// בדיקת תשובה לשאלה
+app.post("/api/questions/:id/answer", (req, res) => {
+  const { choice } = req.body;
+
+  if (!Number.isInteger(choice)) {
+    return res.status(400).json({ error: "choice must be an integer" });
+  }
+
+  const q = db
+    .prepare("SELECT correct FROM questions WHERE id = ?")
+    .get(req.params.id);
+
+  if (!q) {
+    return res.status(404).json({ error: "Question not found" });
+  }
+  res.json({ correct: choice === q.correct, correctIndex: q.correct });
 });
 
 // סימון שיעור כהושלם או לא הושלם
